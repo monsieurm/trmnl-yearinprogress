@@ -1,0 +1,19 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+polling_url: https://usetrmnl.com/custom_plugin_example_data.json
+polling_headers: ''
+custom_fields:
+- keyname: appearence
+  field_type: select
+  options:
+  - Bar
+  - Dots
+  default: Bar
+  name: Appearence
+  description: Select if you want one bar or dots represent the year in progress
+name: Year Progress
+refresh_interval: 1440
