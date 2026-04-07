@@ -1,0 +1,76 @@
+<script>
+  document.addEventListener('DOMContentLoaded', event => {
+    const timestamp = {{ trmnl.system.timestamp_utc }};
+    const timezoneOffset = {{ trmnl.user.utc_offset }};
+    const today = new Date((timestamp + timezoneOffset) * 1000);
+    const yearDiv = document.querySelector('.dots');
+    let day = 0;
+    let percent = 0;
+
+    function isLeap(year) {
+      return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+    }
+
+    function getDayOfYear(date) {
+      const startOfYear = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      const diff = date - startOfYear;
+      const dayNumber = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+      return dayNumber;
+    }
+
+    function convertInPercent(year, dayOfYear) {
+      return ((100 / (365 + isLeap(year))) * dayOfYear).toFixed(2);
+    }
+
+    function createYearHTML() {
+      for (let month = 0; month < 12; month++) {
+        const monthDiv = document.createElement('div');
+
+        monthDiv.className = 'month';
+
+        const daysInMonth = new Date(2025, month + 1, 0).getDate();
+
+        for (let day = 1; day <= 31; day++) {
+          const dayDiv = document.createElement('div');
+
+          dayDiv.classList.add('dot');
+
+          if (day > daysInMonth) {
+            dayDiv.classList.add('bg-white');
+          } else {
+            dayDiv.classList.add('dot-available');
+            dayDiv.classList.add('bg-gray-6');
+          }
+
+          monthDiv.appendChild(dayDiv);
+        }
+        yearDiv.appendChild(monthDiv);
+      }
+      return yearDiv;
+    }
+
+    function checkPassedDays(d) {
+      for (let day = 0; day < d; day++) {
+        document.querySelectorAll('.dot-available')[day].classList.remove('bg-gray-6');
+        document.querySelectorAll('.dot-available')[day].classList.add('bg-black');
+      }
+    }
+
+    day = getDayOfYear(today);
+    percent = convertInPercent(today.getUTCFullYear(), day);
+
+    document.querySelector('#dayOfTheYear').textContent = day;
+    document.querySelector('#inProgress').textContent = `${percent}%`;
+
+    if (yearDiv) {
+      createYearHTML();
+      checkPassedDays(day);
+    }
+
+    if (document.querySelector('.bar')) {
+      document.querySelector('.bar').style.width = `${percent}%`;
+    }
+
+    document.querySelector('#footer').textContent = today.getUTCFullYear();
+  });
+</script>
