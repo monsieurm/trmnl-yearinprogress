@@ -46,6 +46,7 @@
 </style>
 
 {% template year_layout %}
+{% assign appearence = trmnl.plugin_settings.custom_fields_values.appearence | downcase %}
 <div class="layout layout--col layout--top layout--stretch-x {{ layout_class }}">
   <div class="grid {{ grid_cols }} grow-0 no-shrink w--full">
     <div class="item">
@@ -67,7 +68,7 @@
   <div class="divider grow-0 no-shrink w--full"></div>
 
   <div class="year-progress w--full stretch-y flex flex--col flex--stretch-x {{ progress_class }} h--min-0">
-    {% if appearance == 'bar' %}
+    {% if appearence == 'bar' %}
     <div class="progress-bar progress-bar--{{ bar_size }} progress-bar--emphasis-3 w--full grow-0">
       <div class="track">
         <div class="fill" id="yearBar"></div>
