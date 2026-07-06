@@ -31,6 +31,20 @@ oauth_expiry_field_name: ''
 oauth_expiry_strategy: ''
 oauth_fixed_expiry_ms: ''
 custom_fields:
+- keyname: about
+  name: About This Plugin
+  field_type: author_bio
+  category: calendar,life
+  description: |
+    Year Progress shows how far you are through the current year — as a progress bar or a dot calendar (one dot per day, one row per month).
+
+    **Setup**
+    1. Install the plugin
+    2. Choose **Bar** or **Dots** under Appearence
+    3. Add it to your playlist
+
+    No API keys or external services. Uses your TRMNL device date and timezone. Refreshes once per day.
+  github_url: https://github.com/monsieurm/trmnl-yearinprogress
 - keyname: appearence
   field_type: select
   options:
