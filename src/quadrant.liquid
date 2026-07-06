@@ -1,0 +1,2 @@
+{% assign appearance = trmnl.plugin_settings.custom_fields_values.appearence | downcase %}
+{% render "year_layout", appearance: appearance, grid_cols: "grid--cols-2", value_size: "value-small", bar_size: "xsmall", dots_size: "xsmall", dots_class: "year-dots--compact", layout_class: "", progress_class: "flex--center-y", icon_size: 24 %}

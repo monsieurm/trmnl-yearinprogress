@@ -1,0 +1,168 @@
+<style>
+  /* Calendar grid: 31 columns — no native utility for this layout */
+  #yearDots:not(.year-dots--compact) {
+    gap: var(--gap);
+  }
+
+  .progress-dots .track.year-month {
+    display: grid;
+    grid-template-columns: repeat(31, 1fr);
+    gap: 1px;
+    width: 100%;
+    justify-items: center;
+  }
+
+  /* Dot size: adjust width/height below (e.g. 5px, 6px, 8px) */
+  .progress-dots .track.year-month .dot {
+    width: 8px;
+    height: 8px;
+    min-width: 0;
+  }
+
+  .progress-dots.year-dots--compact .track.year-month .dot {
+    width: 4px;
+    height: 4px;
+    box-sizing: border-box;
+  }
+
+  .progress-dots.year-dots--compact {
+    gap: var(--gap-xsmall);
+  }
+
+  .progress-dots.year-dots--compact .track.year-month {
+    gap: 0;
+    line-height: 0;
+  }
+
+  .progress-dots .track.year-month .dot-available:not(.dot--filled) {
+    border-color: var(--framework-border-muted);
+  }
+
+  .progress-dots .track.year-month .dot--spacer {
+    visibility: hidden;
+    border-color: transparent;
+    background: transparent;
+  }
+</style>
+
+{% template year_layout %}
+<div class="layout layout--col layout--top layout--stretch-x {{ layout_class }}">
+  <div class="grid {{ grid_cols }} grow-0 no-shrink w--full">
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="label">Day of the year</span>
+        <span id="dayOfTheYear" class="value {{ value_size }} value--tnums"></span>
+      </div>
+    </div>
+    <div class="item">
+      <div class="meta"></div>
+      <div class="content">
+        <span class="label">In progress</span>
+        <span id="inProgress" class="value {{ value_size }} value--tnums"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider grow-0 no-shrink w--full"></div>
+
+  <div class="year-progress w--full stretch-y flex flex--col flex--stretch-x {{ progress_class }} h--min-0">
+    {% if appearance == 'bar' %}
+    <div class="progress-bar progress-bar--{{ bar_size }} progress-bar--emphasis-3 w--full grow-0">
+      <div class="track">
+        <div class="fill" id="yearBar"></div>
+      </div>
+    </div>
+    {% else %}
+    <div class="progress-dots progress-dots--{{ dots_size }} {{ dots_class }} w--full grow-0 flex flex--col flex--stretch-x" id="yearDots"></div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="title_bar">
+  <svg class="image" width="{{ icon_size }}" height="{{ icon_size }}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 9H21M7 3V5M17 3V5M6 12H8M11 12H13M16 12H18M6 15H8M11 15H13M16 15H18M6 18H8M11 18H13M16 18H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#000000" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+  <span class="title">Progress this year</span>
+  <span id="footer" class="instance"></span>
+</div>
+{% endtemplate %}
+
+<script>
+  function initYearProgress() {
+    const timestamp = {{ trmnl.system.timestamp_utc }};
+    const timezoneOffset = {{ trmnl.user.utc_offset }};
+    const today = new Date((timestamp + timezoneOffset) * 1000);
+    const yearDiv = document.getElementById('yearDots');
+    const bar = document.getElementById('yearBar');
+
+    function isLeap(year) {
+      return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+    }
+
+    function getDayOfYear(date) {
+      const startOfYear = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      const diff = date - startOfYear;
+      return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    function convertInPercent(year, dayOfYear) {
+      return ((100 / (365 + isLeap(year))) * dayOfYear).toFixed(2);
+    }
+
+    function createYearHTML() {
+      for (let month = 0; month < 12; month++) {
+        const monthDiv = document.createElement('div');
+        monthDiv.className = 'track year-month';
+
+        const daysInMonth = new Date(today.getUTCFullYear(), month + 1, 0).getDate();
+
+        for (let day = 1; day <= 31; day++) {
+          const dayDiv = document.createElement('div');
+
+          if (day > daysInMonth) {
+            dayDiv.className = 'dot dot--spacer';
+          } else {
+            dayDiv.className = 'dot dot-available bg-gray-6';
+          }
+
+          monthDiv.appendChild(dayDiv);
+        }
+        yearDiv.appendChild(monthDiv);
+      }
+    }
+
+    function checkPassedDays(d) {
+      document.querySelectorAll('.dot-available').forEach((dot, index) => {
+        const filled = index < d;
+        dot.classList.toggle('dot--filled', filled);
+        dot.classList.toggle('bg-gray-6', !filled);
+      });
+    }
+
+    const day = getDayOfYear(today);
+    const percent = convertInPercent(today.getUTCFullYear(), day);
+
+    document.querySelector('#dayOfTheYear').textContent = day;
+    document.querySelector('#inProgress').textContent = `${percent}%`;
+    document.querySelector('#footer').textContent = today.getUTCFullYear();
+
+    if (yearDiv) {
+      yearDiv.replaceChildren();
+      createYearHTML();
+      checkPassedDays(day);
+    }
+
+    if (bar) {
+      bar.style.width = `${percent}%`;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initYearProgress);
+  } else {
+    initYearProgress();
+  }
+
+  window.addEventListener('trmnl:framework:ready', initYearProgress);
+</script>

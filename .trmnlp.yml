@@ -1,0 +1,10 @@
+---
+watch:
+  - .trmnlp.yml
+  - src
+
+custom_fields:
+  appearence: Dots
+
+variables:
+  trmnl: {}
