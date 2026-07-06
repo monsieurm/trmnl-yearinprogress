@@ -28,7 +28,7 @@ Track how far you are through the year on a [TRMNL](https://usetrmnl.com/) devic
 ### Recommended — TRMNL Recipe (one click)
 
 <!-- Replace with your Recipe URL after publication -->
-**[Install Year Progress on TRMNL →](https://trmnl.com/recipes/YOUR_RECIPE_ID)**
+**[Install Year Progress on TRMNL →](https://trmnl.com/recipes/369686)**
 
 1. Click **Install**
 2. Choose **Bar** or **Dots** under **Appearence**
