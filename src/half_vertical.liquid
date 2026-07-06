@@ -1,1 +1,2 @@
-{% render "year_layout", trmnl: trmnl, grid_cols: "grid--cols-1", value_size: "value--large", bar_size: "base", dots_size: "xsmall", dots_class: "", layout_class: "", progress_class: "flex--center-y", icon_size: 24 %}
+{% assign appearence = trmnl.plugin_settings.custom_fields_values.appearence | downcase %}
+{% render "year_layout", appearence: appearence, grid_cols: "grid--cols-1", value_size: "value--large", bar_size: "base", dots_size: "xsmall", dots_class: "", layout_class: "", progress_class: "flex--center-y", icon_size: 24 %}

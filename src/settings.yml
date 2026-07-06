@@ -7,7 +7,7 @@ polling_verb:
 framework_version: 
 serverless_language: 
 polling_url: 
-polling_headers: 
+polling_headers: '{{ appearence }}'
 polling_body: 
 id: 369686
 oauth_enabled: 'false'
